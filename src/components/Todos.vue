@@ -1,10 +1,24 @@
 <template>
   <div>
     <h3>Todos</h3>
+      <div class="legend">
+      <span>Double click to mark as complete</span>
+      <span>
+        <span class="incomplete-box"></span> = Incomplete
+      </span>
+      <span>
+        <span class="complete-box"></span> = Complete
+      </span>
+    </div>
     <div class="todos">
-      <div v-for="todo in allTodos" :key="todo.id" class="todo">
+      <div
+      :class="{'is-complete':todo.completed}"
+      @dblclick="onDblClick(todo)"
+      v-for="todo in allTodos"
+      :key="todo.id"
+      class="todo">
         {{todo.title}}
-        <div @click="deleteTodo(todo.id)">X</div>
+        <div class="remove" @click="deleteTodo(todo.id)">X</div>
       </div>
     </div>
   </div>
@@ -17,7 +31,14 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: "Todos",
   methods: {
-    ...mapActions(['fetchTodos', 'deleteTodo'])
+    ...mapActions(['fetchTodos', 'deleteTodo', 'updateTodo']),
+    onDblClick(todo) {
+      const updTodo = {
+        ...todo,
+        completed: !todo.completed
+      }
+      this.updateTodo(updTodo)
+    }
   },
   computed: {
     ...mapGetters(['allTodos'])
@@ -29,6 +50,11 @@ export default {
 </script>
 
 <style scoped>
+  .remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
   .todos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
